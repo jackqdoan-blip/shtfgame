@@ -1,0 +1,479 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SHTF Survival Inventory Calculator</title>
+<style>
+:root{--bg:#101820;--p:#1b2935;--line:#385064;--t:#edf3f6;--m:#a9bac5;--a:#e3ad57;--g:#79c69a;--w:#e6b65d;--r:#e47d70}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--t);font:15px/1.5 system-ui}main{max-width:1050px;margin:auto;padding:22px 15px 55px}h1{font-size:clamp(28px,5vw,42px);line-height:1.1;margin:8px 0}h2{font-size:20px;margin:0 0 12px}.eyebrow{color:var(--a);font-size:12px;font-weight:bold;letter-spacing:.12em}p,.note{color:var(--m)}.panel{background:var(--p);border:1px solid var(--line);border-radius:15px;padding:17px;margin:14px 0}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}label{display:block;color:var(--m);font-size:13px;margin:0 0 5px}input,select{width:100%;background:#101a22;color:var(--t);border:1px solid #496174;border-radius:9px;padding:10px;font:inherit}button{border:0;border-radius:9px;padding:11px 14px;background:var(--a);font-weight:bold;cursor:pointer}.secondary{background:#314858;color:var(--t);border:1px solid #536d80}.danger{background:#4b2c2b;color:#ffd7d2}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}.item{display:grid;grid-template-columns:1.1fr 1.2fr .8fr .8fr auto;gap:8px;align-items:end;padding:10px 0;border-bottom:1px solid #314858}.item .field{min-width:0}.empty{padding:18px;text-align:center;border:1px dashed #496174;border-radius:10px;color:var(--m)}.metricgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.metric{background:#101a22;border:1px solid #344c5e;border-radius:11px;padding:12px}.metric .v{font-size:26px;font-weight:800}.metric .k{font-size:12px;color:var(--m)}.result{display:grid;grid-template-columns:1fr 1.4fr;gap:15px;align-items:center}.big{font-size:clamp(42px,8vw,65px);font-weight:850;color:var(--a);line-height:1}.status{font-weight:bold}.good{color:var(--g)}.warn{color:var(--w)}.bad{color:var(--r)}.bar{height:8px;background:#0e171e;border-radius:20px;overflow:hidden;margin-top:6px}.bar span{display:block;height:100%;background:var(--g)}.checkrow{display:flex;gap:9px;align-items:center;margin:8px 0}.checkrow input{width:auto}ol{padding-left:22px}li{margin:9px 0}.note{font-size:12px}.nutrition-box{margin-top:18px;padding:14px;background:#101a22;border:1px solid #344c5e;border-radius:12px}.nut-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}.nut-table th,.nut-table td{padding:8px 6px;border-bottom:1px solid #344c5e;text-align:left}.nut-table th{color:var(--m);font-size:11px}.nut-bar{height:6px;background:#0b1218;border-radius:20px;overflow:hidden;min-width:55px}.nut-bar span{display:block;height:100%}.nut-status{font-weight:700}.nut-kpi{display:flex;gap:9px;flex-wrap:wrap;margin:10px 0}.nut-pill{background:#1c3040;border:1px solid #385064;border-radius:20px;padding:6px 10px;font-size:12px}.item{grid-template-columns:1.1fr .9fr .8fr .8fr .8fr auto}.item .wide{grid-column:1/-1}.item details{background:#101a22;border:1px solid #344c5e;border-radius:8px;padding:8px}.item details .fields{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:8px}.item details input{padding:7px;font-size:12px}footer{font-size:12px;color:var(--m);margin-top:20px}@media(max-width:700px){.grid,.result{grid-template-columns:1fr}.fields{grid-template-columns:repeat(2,minmax(0,1fr))}.metricgrid{grid-template-columns:repeat(2,minmax(0,1fr))}.item{grid-template-columns:1fr 1fr}.item .remove{justify-self:end}}
+</style></head><body><main>
+<header><div class="eyebrow">SHTF PREPAREDNESS • INVENTORY ASSESSMENT</div><h1>How many days can your household survive?</h1><p>Enter your real supplies and equipment. The calculator estimates the first critical shortage and scores your overall preparedness.</p></header>
+<section class="panel"><h2>1. Household and daily requirements</h2><div class="fields">
+<div><label>People in household</label><input id="people" type="number" min="1" value="4"></div><div><label>Water L/person/day</label><input id="waterNeed" type="number" value="4" min="1" step=".5"></div><div><label>Food kcal/person/day</label><input id="calNeed" type="number" value="2100" min="500" step="100"></div><div><label>Protein g/person/day</label><input id="proteinNeed" type="number" value="50" min="10"></div><div><label>Nutrition reference profile</label><select id="nutProfile"><option value="mixed" selected>Mixed adult baseline (19–50)</option><option value="male">Adult male (19–50)</option><option value="female">Adult female (19–50)</option></select></div><div><label>Electricity kWh/day</label><input id="powerNeed" type="number" value="1.5" min="0" step=".1"></div><div><label>Cooking fuel hours/day</label><input id="cookNeed" type="number" value="1.5" min="0" step=".25"></div></div><p class="note">Starting assumptions only. Adjust for climate, activity, age, health needs and actual household use.</p></section>
+<section class="panel"><h2>2. Your inventory</h2><p>Choose from an expanded catalogue of grains, legumes, canned meat and seafood, dairy, nuts, seeds, oils, vegetables, fruit, seaweed, ready meals, baking ingredients and seasonings. Enter each item and its quantity. For packaged foods, adjust the approximate edible grams per unit or use custom food and enter the nutrition-label values.</p><div id="items"></div><div class="actions"><button id="add">+ Add inventory item</button><button class="secondary" id="sample">Load example inventory</button><button class="secondary" id="clear">Clear inventory</button></div></section>
+<section class="panel"><h2>3. Equipment and ongoing sources</h2><div class="grid"><div>
+<div><label>Untreated water reserve (L)</label><input id="rawWater" type="number" value="0" min="0"></div><div><label>Rainwater collection (L/day during expected rain)</label><input id="rain" type="number" value="0" min="0" step=".5"></div><div><label>Filter capacity remaining (L)</label><input id="filterCap" type="number" value="0" min="0"></div><div class="checkrow"><input id="filter" type="checkbox"><label for="filter">Suitable working water treatment method available</label></div><p class="note">A filter does not create water. Remaining capacity limits how much untreated water can be treated.</p>
+</div><div>
+<div><label>Solar generation (kWh/day average)</label><input id="solar" type="number" value="0" min="0" step=".1"></div><div><label>Generator fuel (L)</label><input id="genFuel" type="number" value="0" min="0" step=".5"></div><div><label>Generator fuel use (L/hour)</label><input id="genRate" type="number" value="1" min=".1" step=".1"></div><div><label>Generator run hours/day</label><input id="genHours" type="number" value="0" min="0" step=".5"></div><div><label>Medical supplies coverage (days, estimate)</label><input id="medical" type="number" value="0" min="0"></div>
+</div></div><div class="grid" style="margin-top:12px"><div><label>Hygiene supplies coverage (days)</label><input id="hygiene" type="number" value="0" min="0"><label>Toilet / waste backup plan</label><select id="toilet"><option value="0">No backup plan (critical immediately if sewer service fails)</option><option value="7">Basic short-term plan</option><option value="30">Reliable backup setup</option><option value="90">Long-duration managed system</option></select></div><div><label>Heating / cooling resilience (days, estimate)</label><input id="climate" type="number" value="0" min="0"><label>Security and shelter readiness</label><select id="security"><option value="0">Low: major gaps</option><option value="1">Basic: doors, lighting, awareness</option><option value="2" selected>Good: reinforced home and procedures</option><option value="3">Strong: layered plan and community support</option></select></div></div></section>
+<section class="panel"><h2>4. Survival assessment</h2><div class="result"><div><div class="big" id="days">0</div><div class="status" id="dayLabel">days until first modeled critical shortage</div><p class="note" id="confidence">Add inventory to calculate.</p></div><div class="metricgrid"><div class="metric"><div class="v" id="score">0</div><div class="k">Readiness score / 100</div></div><div class="metric"><div class="v" id="foodDays">0</div><div class="k">Food energy / protein days</div></div><div class="metric"><div class="v" id="waterDays">0</div><div class="k">Safe water days</div></div><div class="metric"><div class="v" id="powerDays">0</div><div class="k">Power days</div></div><div class="metric"><div class="v" id="foodVariety">0</div><div class="k">Food types stocked</div></div><div class="metric"><div class="v" id="foodQualityScore">0</div><div class="k">Food nutrition score / 100</div></div></div></div><div class="nutrition-box"><h2 style="margin-top:22px">Food quality and nutrient coverage</h2><p class="note">This estimates the average nutrient intake per person per day if the stored food is spread across the calorie-supported food days. It is a screening estimate, not a diagnosis.</p><div id="nutritionSummary"></div><div id="nutrientTable"></div><div id="nutritionAdvice"></div><details style="margin-top:12px"><summary>How the nutrition estimate works and its limitations</summary><p class="note">Built-in foods use generic category-based estimates per 100 g, converted using an approximate edible weight per entered unit. Brand labels, recipes, draining, fortification, cooking losses and package sizes can change actual values significantly. Use the editable grams-per-unit and custom-food nutrition fields to improve the estimate. Reference targets are simplified adult 19–50 planning values; children, pregnancy, breastfeeding, older adults and medical conditions need different targets. A low modelled percentage does not diagnose a deficiency, and a high score does not prove a diet is safe or complete.</p><p class="note">For better exact product data, use the <a href="https://www.foodstandards.gov.au/science-data/food-nutrient-databases/afcd" target="_blank" rel="noopener">Australian Food Composition Database</a> or <a href="https://www.foodstandards.gov.au/science-data/food-nutrient-databases/ausnut" target="_blank" rel="noopener">AUSNUT 2023</a>, and check reference values at <a href="https://www.eatforhealth.gov.au/nutrient-reference-values" target="_blank" rel="noopener">Eat for Health</a>.</p></details></div><h2 style="margin-top:20px">What runs out first?</h2><div id="breakdown"></div><h2 style="margin-top:20px">Priority improvements</h2><ol id="priorities"><li>Enter inventory to generate priorities.</li></ol><p class="note" id="caveat"></p></section>
+<footer>Offline calculator. Estimates assume supplies remain usable and accessible. It does not fully model illness, injury, spoilage, theft, conflict, extreme weather, equipment failure, maintenance or changing needs. Food micronutrient profiles are estimates, and adult nutrient targets do not apply to infants or all children, pregnancy, breastfeeding, older adults or medical conditions. Macro ranges shown are broad adult planning ranges, not individual prescriptions. This is a planning aid, not a guarantee of survival.</footer></main>
+<script>
+const C={
+water:{n:"Drinking water",u:"L",g:"water"},
+rice:{n:"White rice (dry)",u:"kg",k:3600,p:70,g:"food",cat:"Grains & starches"},
+brownrice:{n:"Brown rice (dry)",u:"kg",k:3700,p:75,g:"food",cat:"Grains & starches"},
+oats:{n:"Rolled oats",u:"kg",k:3890,p:169,g:"food",cat:"Grains & starches"},
+pasta:{n:"Pasta (dry)",u:"kg",k:3710,p:130,g:"food",cat:"Grains & starches"},
+flour:{n:"Wheat flour",u:"kg",k:3640,p:100,g:"food",cat:"Grains & starches"},
+bread:{n:"Shelf-stable crispbread",u:"kg",k:3500,p:100,g:"food",cat:"Grains & starches"},
+couscous:{n:"Couscous (dry)",u:"kg",k:3760,p:130,g:"food",cat:"Grains & starches"},
+quinoa:{n:"Quinoa (dry)",u:"kg",k:3680,p:141,g:"food",cat:"Grains & starches"},
+barley:{n:"Pearl barley (dry)",u:"kg",k:3520,p:100,g:"food",cat:"Grains & starches"},
+polenta:{n:"Polenta / cornmeal",u:"kg",k:3700,p:80,g:"food",cat:"Grains & starches"},
+noodles:{n:"Instant noodles",u:"packs",k:380,p:8,g:"food",cat:"Grains & starches"},
+potato:{n:"Instant mashed potato flakes",u:"kg",k:3500,p:75,g:"food",cat:"Grains & starches"},
+crackers:{n:"Plain crackers",u:"kg",k:4300,p:90,g:"food",cat:"Grains & starches"},
+ricecakes:{n:"Rice cakes",u:"packs",k:350,p:7,g:"food",cat:"Grains & starches"},
+lentils:{n:"Dried lentils",u:"kg",k:3520,p:250,g:"food",cat:"Legumes & plant protein"},
+chickpeas:{n:"Dried chickpeas",u:"kg",k:3640,p:200,g:"food",cat:"Legumes & plant protein"},
+beansdry:{n:"Dried mixed beans",u:"kg",k:3400,p:210,g:"food",cat:"Legumes & plant protein"},
+peasdry:{n:"Split peas",u:"kg",k:3410,p:240,g:"food",cat:"Legumes & plant protein"},
+soy:{n:"Dried soybeans",u:"kg",k:4460,p:365,g:"food",cat:"Legumes & plant protein"},
+peanutbutter:{n:"Peanut butter",u:"kg",k:5880,p:250,g:"food",cat:"Nuts, seeds & spreads"},
+peanuts:{n:"Peanuts",u:"kg",k:5670,p:260,g:"food",cat:"Nuts, seeds & spreads"},
+almonds:{n:"Almonds",u:"kg",k:5790,p:210,g:"food",cat:"Nuts, seeds & spreads"},
+cashews:{n:"Cashews",u:"kg",k:5530,p:180,g:"food",cat:"Nuts, seeds & spreads"},
+walnuts:{n:"Walnuts",u:"kg",k:6540,p:150,g:"food",cat:"Nuts, seeds & spreads"},
+sunflower:{n:"Sunflower seeds",u:"kg",k:5840,p:210,g:"food",cat:"Nuts, seeds & spreads"},
+chia:{n:"Chia seeds",u:"kg",k:4860,p:165,g:"food",cat:"Nuts, seeds & spreads"},
+flax:{n:"Flaxseed",u:"kg",k:5340,p:183,g:"food",cat:"Nuts, seeds & spreads"},
+tuna:{n:"Canned tuna",u:"cans",k:120,p:26,g:"food",cat:"Canned seafood & meat"},
+salmon:{n:"Canned salmon",u:"cans",k:220,p:23,g:"food",cat:"Canned seafood & meat"},
+sardines:{n:"Canned sardines",u:"cans",k:190,p:22,g:"food",cat:"Canned seafood & meat"},
+mackerel:{n:"Canned mackerel",u:"cans",k:230,p:22,g:"food",cat:"Canned seafood & meat"},
+anchovy:{n:"Canned anchovies",u:"cans",k:100,p:14,g:"food",cat:"Canned seafood & meat"},
+beef:{n:"Canned beef",u:"cans",k:250,p:20,g:"food",cat:"Canned seafood & meat"},
+cornedbeef:{n:"Canned corned beef",u:"cans",k:350,p:24,g:"food",cat:"Canned seafood & meat"},
+chicken:{n:"Canned chicken",u:"cans",k:180,p:25,g:"food",cat:"Canned seafood & meat"},
+ham:{n:"Canned ham",u:"cans",k:300,p:18,g:"food",cat:"Canned seafood & meat"},
+pork:{n:"Canned pork",u:"cans",k:280,p:22,g:"food",cat:"Canned seafood & meat"},
+spam:{n:"Canned luncheon meat",u:"cans",k:350,p:13,g:"food",cat:"Canned seafood & meat"},
+jerky:{n:"Beef jerky",u:"kg",k:4100,p:330,g:"food",cat:"Canned seafood & meat"},
+milk:{n:"Full-cream milk powder",u:"kg",k:5000,p:260,g:"food",cat:"Dairy & eggs"},
+skimMilk:{n:"Skim milk powder",u:"kg",k:3600,p:360,g:"food",cat:"Dairy & eggs"},
+whey:{n:"Whey protein powder",u:"kg",k:4000,p:800,g:"food",cat:"Dairy & eggs"},
+evapMilk:{n:"Evaporated milk",u:"cans",k:350,p:18,g:"food",cat:"Dairy & eggs"},
+condensedMilk:{n:"Sweetened condensed milk",u:"cans",k:1000,p:20,g:"food",cat:"Dairy & eggs"},
+cheese:{n:"Hard cheese",u:"kg",k:4000,p:250,g:"food",cat:"Dairy & eggs"},
+eggpowder:{n:"Whole egg powder",u:"kg",k:5900,p:480,g:"food",cat:"Dairy & eggs"},
+eggs:{n:"Eggs",u:"dozen",k:840,p:72,g:"food",cat:"Dairy & eggs"},
+oil:{n:"Vegetable / canola oil",u:"L",k:8840,p:0,g:"food",cat:"Oils, fats & spreads"},
+oliveoil:{n:"Olive oil",u:"L",k:8840,p:0,g:"food",cat:"Oils, fats & spreads"},
+coconut:{n:"Coconut oil",u:"L",k:8920,p:0,g:"food",cat:"Oils, fats & spreads"},
+ghee:{n:"Ghee",u:"kg",k:9000,p:0,g:"food",cat:"Oils, fats & spreads"},
+lard:{n:"Lard / cooking fat",u:"kg",k:9000,p:0,g:"food",cat:"Oils, fats & spreads"},
+sugar:{n:"White sugar",u:"kg",k:3870,p:0,g:"food",cat:"Sweeteners & baking"},
+brownSugar:{n:"Brown sugar",u:"kg",k:3800,p:0,g:"food",cat:"Sweeteners & baking"},
+honey:{n:"Honey",u:"kg",k:3040,p:3,g:"food",cat:"Sweeteners & baking"},
+jam:{n:"Jam",u:"jars",k:1200,p:3,g:"food",cat:"Sweeteners & baking"},
+goldenSyrup:{n:"Golden syrup",u:"kg",k:3200,p:0,g:"food",cat:"Sweeteners & baking"},
+bakingPowder:{n:"Baking powder",u:"tins",k:0,p:0,g:"food",cat:"Sweeteners & baking"},
+yeast:{n:"Dried yeast",u:"packs",k:330,p:40,g:"food",cat:"Sweeteners & baking"},
+cannedTomato:{n:"Canned tomatoes",u:"cans",k:80,p:4,g:"food",cat:"Vegetables & legumes"},
+corn:{n:"Canned sweet corn",u:"cans",k:150,p:5,g:"food",cat:"Vegetables & legumes"},
+peas:{n:"Canned peas",u:"cans",k:130,p:8,g:"food",cat:"Vegetables & legumes"},
+carrots:{n:"Canned carrots",u:"cans",k:70,p:2,g:"food",cat:"Vegetables & legumes"},
+mixedVeg:{n:"Canned mixed vegetables",u:"cans",k:100,p:4,g:"food",cat:"Vegetables & legumes"},
+mushrooms:{n:"Canned mushrooms",u:"cans",k:50,p:4,g:"food",cat:"Vegetables & legumes"},
+beetroot:{n:"Canned beetroot",u:"cans",k:80,p:2,g:"food",cat:"Vegetables & legumes"},
+pumpkin:{n:"Canned pumpkin",u:"cans",k:100,p:3,g:"food",cat:"Vegetables & legumes"},
+potatoCan:{n:"Canned potatoes",u:"cans",k:150,p:4,g:"food",cat:"Vegetables & legumes"},
+sauerkraut:{n:"Sauerkraut",u:"jars",k:150,p:7,g:"food",cat:"Vegetables & legumes"},
+pickles:{n:"Pickles",u:"jars",k:80,p:2,g:"food",cat:"Vegetables & legumes"},
+cannedFruit:{n:"Canned fruit in juice",u:"cans",k:180,p:1,g:"food",cat:"Fruit & dried fruit"},
+peaches:{n:"Canned peaches",u:"cans",k:180,p:1,g:"food",cat:"Fruit & dried fruit"},
+pineapple:{n:"Canned pineapple",u:"cans",k:200,p:1,g:"food",cat:"Fruit & dried fruit"},
+applesauce:{n:"Apple puree",u:"jars",k:100,p:0,g:"food",cat:"Fruit & dried fruit"},
+raisins:{n:"Raisins / sultanas",u:"kg",k:2990,p:30,g:"food",cat:"Fruit & dried fruit"},
+dates:{n:"Dried dates",u:"kg",k:2820,p:20,g:"food",cat:"Fruit & dried fruit"},
+apricots:{n:"Dried apricots",u:"kg",k:2410,p:35,g:"food",cat:"Fruit & dried fruit"},
+prunes:{n:"Prunes",u:"kg",k:2400,p:22,g:"food",cat:"Fruit & dried fruit"},
+bananaChips:{n:"Dried banana chips",u:"kg",k:5200,p:30,g:"food",cat:"Fruit & dried fruit"},
+fruitBars:{n:"Fruit bars",u:"bars",k:120,p:1,g:"food",cat:"Fruit & dried fruit"},
+noodlesSoup:{n:"Instant soup sachets",u:"sachets",k:70,p:2,g:"food",cat:"Ready meals & snacks"},
+mealPouch:{n:"Shelf-stable meal pouches",u:"pouches",k:450,p:18,g:"food",cat:"Ready meals & snacks"},
+cannedSoup:{n:"Canned soup",u:"cans",k:180,p:7,g:"food",cat:"Ready meals & snacks"},
+bakedBeans:{n:"Canned baked beans",u:"cans",k:330,p:18,g:"food",cat:"Ready meals & snacks"},
+curry:{n:"Canned curry",u:"cans",k:300,p:12,g:"food",cat:"Ready meals & snacks"},
+chilli:{n:"Canned chilli con carne",u:"cans",k:350,p:20,g:"food",cat:"Ready meals & snacks"},
+macCheese:{n:"Macaroni cheese meal",u:"packs",k:400,p:14,g:"food",cat:"Ready meals & snacks"},
+energyBars:{n:"Energy bars",u:"bars",k:200,p:5,g:"food",cat:"Ready meals & snacks"},
+darkChocolate:{n:"Dark chocolate",u:"kg",k:6000,p:80,g:"food",cat:"Ready meals & snacks"},
+biscuits:{n:"Plain biscuits",u:"kg",k:4700,p:60,g:"food",cat:"Ready meals & snacks"},
+crackersSnacks:{n:"Snack crackers",u:"kg",k:4500,p:80,g:"food",cat:"Ready meals & snacks"},
+electrolyte:{n:"Electrolyte powder",u:"serves",k:20,p:0,g:"food",cat:"Seasonings & extras"},
+salt:{n:"Salt",u:"kg",k:0,p:0,g:"food",cat:"Seasonings & extras"},
+stock:{n:"Stock cubes",u:"cubes",k:10,p:0,g:"food",cat:"Seasonings & extras"},
+soySauce:{n:"Soy sauce",u:"bottles",k:100,p:10,g:"food",cat:"Seasonings & extras"},
+vinegar:{n:"Vinegar",u:"L",k:180,p:0,g:"food",cat:"Seasonings & extras"},
+spices:{n:"Dried herbs & spices",u:"jars",k:20,p:1,g:"food",cat:"Seasonings & extras"},
+coffee:{n:"Instant coffee",u:"jars",k:50,p:2,g:"food",cat:"Seasonings & extras"},
+tea:{n:"Tea bags",u:"boxes",k:0,p:0,g:"food",cat:"Seasonings & extras"},
+custom:{n:"Custom food (enter nutrition)",u:"units",k:0,p:0,g:"food",cat:"Custom",custom:1},
+butane:{n:"Butane canister (220g)",u:"canisters",h:2.5,g:"fuel"},
+lpg:{n:"LPG / propane",u:"kg",h:12,g:"fuel"},
+wood:{n:"Dry firewood",u:"kg",h:.25,g:"fuel"},
+uhtMilk:{n:"UHT long-life cow's milk",u:"L",k:610,p:32,g:"food",cat:"Dairy & eggs"},
+soyMilk:{n:"Fortified shelf-stable soy milk",u:"L",k:450,p:32,g:"food",cat:"Dairy & eggs"},
+coconutMilk:{n:"Canned coconut milk",u:"cans",k:600,p:6,g:"food",cat:"Dairy & eggs"},
+coconutCream:{n:"Canned coconut cream",u:"cans",k:900,p:8,g:"food",cat:"Oils, fats & spreads"},
+tofu:{n:"Shelf-stable tofu",u:"packs",k:160,p:17,g:"food",cat:"Legumes & plant protein"},
+tvp:{n:"Textured vegetable protein (TVP)",u:"kg",k:3300,p:500,g:"food",cat:"Legumes & plant protein"},
+blackBeans:{n:"Canned black beans",u:"cans",k:220,p:14,g:"food",cat:"Legumes & plant protein"},
+kidneyBeans:{n:"Canned kidney beans",u:"cans",k:220,p:14,g:"food",cat:"Legumes & plant protein"},
+cannellini:{n:"Canned cannellini beans",u:"cans",k:220,p:14,g:"food",cat:"Legumes & plant protein"},
+lentilCan:{n:"Canned lentils",u:"cans",k:180,p:13,g:"food",cat:"Legumes & plant protein"},
+edamame:{n:"Dried edamame / soybeans",u:"kg",k:4500,p:360,g:"food",cat:"Legumes & plant protein"},
+sunflowerButter:{n:"Sunflower seed butter",u:"kg",k:6100,p:210,g:"food",cat:"Nuts, seeds & spreads"},
+tahini:{n:"Tahini (sesame paste)",u:"kg",k:5950,p:170,g:"food",cat:"Nuts, seeds & spreads"},
+pumpkinSeeds:{n:"Pumpkin seeds",u:"kg",k:5600,p:300,g:"food",cat:"Nuts, seeds & spreads"},
+pistachios:{n:"Pistachios",u:"kg",k:5620,p:200,g:"food",cat:"Nuts, seeds & spreads"},
+pecans:{n:"Pecans",u:"kg",k:6910,p:90,g:"food",cat:"Nuts, seeds & spreads"},
+macadamia:{n:"Macadamias",u:"kg",k:7180,p:80,g:"food",cat:"Nuts, seeds & spreads"},
+brazilNuts:{n:"Brazil nuts",u:"kg",k:6590,p:140,g:"food",cat:"Nuts, seeds & spreads"},
+nori:{n:"Dried nori seaweed",u:"packs",k:350,p:400,g:"food",cat:"Vegetables & legumes"},
+wakame:{n:"Dried wakame seaweed",u:"packs",k:450,p:200,g:"food",cat:"Vegetables & legumes"},
+spinachPowder:{n:"Dried spinach powder",u:"packs",k:300,p:300,g:"food",cat:"Vegetables & legumes"},
+freezeVeg:{n:"Freeze-dried mixed vegetables",u:"packs",k:350,p:20,g:"food",cat:"Vegetables & legumes"},
+driedBroccoli:{n:"Dehydrated broccoli",u:"kg",k:3400,p:250,g:"food",cat:"Vegetables & legumes"},
+driedCarrot:{n:"Dehydrated carrot",u:"kg",k:3500,p:80,g:"food",cat:"Vegetables & legumes"},
+driedOnion:{n:"Dehydrated onion",u:"kg",k:3400,p:100,g:"food",cat:"Vegetables & legumes"},
+driedGarlic:{n:"Dried garlic",u:"kg",k:3300,p:170,g:"food",cat:"Vegetables & legumes"},
+driedCabbage:{n:"Dehydrated cabbage",u:"kg",k:3000,p:150,g:"food",cat:"Vegetables & legumes"},
+driedMushroom:{n:"Dried mushrooms",u:"kg",k:2800,p:200,g:"food",cat:"Vegetables & legumes"},
+olives:{n:"Canned olives",u:"jars",k:1450,p:10,g:"food",cat:"Vegetables & legumes"},
+cannedAsparagus:{n:"Canned asparagus",u:"cans",k:25,p:3,g:"food",cat:"Vegetables & legumes"},
+cannedSpinach:{n:"Canned spinach",u:"cans",k:70,p:5,g:"food",cat:"Vegetables & legumes"},
+cannedLiver:{n:"Canned liver / liver spread",u:"cans",k:300,p:17,g:"food",cat:"Canned seafood & meat"},
+oysters:{n:"Canned oysters",u:"cans",k:150,p:10,g:"food",cat:"Canned seafood & meat"},
+mussels:{n:"Canned mussels",u:"cans",k:170,p:15,g:"food",cat:"Canned seafood & meat"},
+prawns:{n:"Canned prawns",u:"cans",k:100,p:20,g:"food",cat:"Canned seafood & meat"},
+smokedOysters:{n:"Smoked oysters",u:"cans",k:200,p:10,g:"food",cat:"Canned seafood & meat"},
+soupStock:{n:"Shelf-stable broth / stock",u:"cartons",k:40,p:3,g:"food",cat:"Ready meals & snacks"},
+freezeMeal:{n:"Freeze-dried complete meal",u:"pouches",k:600,p:25,g:"food",cat:"Ready meals & snacks"},
+cerealFortified:{n:"Fortified breakfast cereal",u:"kg",k:3700,p:80,g:"food",cat:"Grains & starches"},
+granola:{n:"Granola / muesli",u:"kg",k:4500,p:100,g:"food",cat:"Grains & starches"},
+cornflakes:{n:"Cornflakes",u:"kg",k:3700,p:70,g:"food",cat:"Grains & starches"},
+crackedWheat:{n:"Bulgur / cracked wheat",u:"kg",k:3420,p:120,g:"food",cat:"Grains & starches"},
+tapioca:{n:"Tapioca pearls",u:"kg",k:3580,p:3,g:"food",cat:"Grains & starches"},
+cornstarch:{n:"Cornflour / cornstarch",u:"kg",k:3810,p:0,g:"food",cat:"Grains & starches"},
+potatoStarch:{n:"Potato starch",u:"kg",k:3570,p:0,g:"food",cat:"Grains & starches"},
+coconutFlour:{n:"Coconut flour",u:"kg",k:4000,p:200,g:"food",cat:"Grains & starches"},
+driedFigs:{n:"Dried figs",u:"kg",k:2490,p:33,g:"food",cat:"Fruit & dried fruit"},
+driedCranberries:{n:"Dried cranberries",u:"kg",k:3250,p:5,g:"food",cat:"Fruit & dried fruit"},
+driedMango:{n:"Dried mango",u:"kg",k:3200,p:20,g:"food",cat:"Fruit & dried fruit"},
+driedApple:{n:"Dried apple",u:"kg",k:2430,p:9,g:"food",cat:"Fruit & dried fruit"},
+guavaPaste:{n:"Guava paste / fruit leather",u:"kg",k:3000,p:5,g:"food",cat:"Fruit & dried fruit"},
+tomatoPaste:{n:"Tomato paste",u:"tins",k:250,p:12,g:"food",cat:"Vegetables & legumes"},
+coconutSugar:{n:"Coconut sugar",u:"kg",k:3800,p:0,g:"food",cat:"Sweeteners & baking"},
+mapleSyrup:{n:"Maple syrup",u:"L",k:2600,p:0,g:"food",cat:"Sweeteners & baking"},
+molasses:{n:"Blackstrap molasses",u:"kg",k:2900,p:0,g:"food",cat:"Sweeteners & baking"},
+gelatine:{n:"Gelatine powder",u:"packs",k:350,p:850,g:"food",cat:"Sweeteners & baking"},
+iodisedSalt:{n:"Iodised table salt",u:"kg",k:0,p:0,g:"food",cat:"Seasonings & extras"},
+miso:{n:"Miso paste",u:"tubs",k:2000,p:120,g:"food",cat:"Seasonings & extras"},
+fishSauce:{n:"Fish sauce",u:"bottles",k:350,p:60,g:"food",cat:"Seasonings & extras"},
+curryPowder:{n:"Curry powder",u:"jars",k:3200,p:140,g:"food",cat:"Seasonings & extras"},
+chilliFlakes:{n:"Dried chilli flakes",u:"jars",k:3000,p:120,g:"food",cat:"Seasonings & extras"},
+battery:{n:"Battery storage (usable)",u:"kWh",g:"battery"}
+};let rows=[];const $=x=>document.getElementById(x),v=x=>Math.max(0,+$(x).value||0),f=n=>!isFinite(n)?"—":n>9999?"10,000+":(Math.floor(n*10)/10).toLocaleString("en-AU");
+function add(type="rice",qty=0){rows.push({id:Math.random(),type,qty,k:0,p:0});draw()}
+function draw(){let host=$("items");host.innerHTML="";if(!rows.length){host.innerHTML='<div class="empty">No inventory entered. Add your first item.</div>';return}rows.forEach(r=>{let c=C[r.type],d=document.createElement("div");d.className="item";d.innerHTML=`<div><label>Supply type</label><select class="type">${Object.entries(C).filter(([k,x])=>!x.cat).map(([k,x])=>`<option value="${k}" ${k===r.type?"selected":""}>${x.n}</option>`).join("")}${[...new Set(Object.values(C).map(x=>x.cat).filter(Boolean))].map(cat=>`<optgroup label="${cat}">${Object.entries(C).filter(([k,x])=>x.cat===cat).map(([k,x])=>`<option value="${k}" ${k===r.type?"selected":""}>${x.n}</option>`).join("")}</optgroup>`).join("")}</select></div><div><label>Quantity (${c.u})</label><input class="qty" type="number" min="0" step="any" value="${r.qty}"></div><div><label>Custom kcal/unit</label><input class="k" type="number" min="0" value="${r.k}" ${c.custom?"":"disabled"}></div><div><label>Custom protein g/unit</label><input class="p" type="number" min="0" value="${r.p}" ${c.custom?"":"disabled"}></div><button class="danger remove">Remove</button>`;d.querySelector(".type").onchange=e=>{r.type=e.target.value;r.k=r.p=0;draw();calc()};d.querySelector(".qty").oninput=e=>{r.qty=+e.target.value||0;calc()};d.querySelector(".k").oninput=e=>{r.k=+e.target.value||0;calc()};d.querySelector(".p").oninput=e=>{r.p=+e.target.value||0;calc()};d.querySelector(".remove").onclick=()=>{rows=rows.filter(x=>x.id!==r.id);draw();calc()};host.appendChild(d)})}
+function calc(){let people=Math.max(1,v("people")),wn=v("waterNeed")*people,cn=v("calNeed")*people,pn=v("proteinNeed")*people,pow=v("powerNeed"),cook=v("cookNeed"),water=0,kcal=0,prot=0,fuel=0,batt=0;rows.forEach(r=>{let c=C[r.type];if(c.g==="water")water+=r.qty;if(c.g==="food"){kcal+=r.qty*(c.custom?r.k:c.k);prot+=r.qty*(c.custom?r.p:c.p)}if(c.g==="fuel")fuel+=r.qty*c.h;if(c.g==="battery")batt+=r.qty});let safe=water+( $("filter").checked?Math.min(v("rawWater"),v("filterCap")):0),wd=wn?safe/wn:Infinity;if(v("rain")>=wn&&wn>0)wd=Infinity;else if(v("rain")>0&&wn>0)wd=safe/(wn-v("rain"));let fd=cn?kcal/cn:Infinity,pd=pn?prot/pn:Infinity,food=Math.min(fd,pd),fuelD=cook?fuel/cook:Infinity,net=Math.max(0,pow-v("solar")),genD=v("genHours")?v("genFuel")/(Math.max(.01,v("genRate"))*v("genHours")):Infinity,power=net===0?Infinity:Math.min(batt/net,genD);let foodTypes=new Set(rows.filter(r=>C[r.type]?.g==="food" && r.qty>0).map(r=>r.type)).size;let med=v("medical")||Infinity,hyg=Math.min(v("hygiene")||Infinity,+$("toilet").value),clim=v("climate")||Infinity;let list=[["Safe water",wd],["Food energy / protein",food],["Cooking fuel",fuelD],["Electricity",power],["Medical supplies",med],["Hygiene / toilet",hyg],["Heating / cooling",clim]],known=list.filter(x=>Number.isFinite(x[1]));let days=known.length?Math.min(...known.map(x=>x[1])):0;let readiness=[Math.min(100,wd/30*100),Math.min(100,food/90*100),Math.min(100,fuelD/30*100),Math.min(100,(isFinite(power)?power:90)/30*100),Math.min(100,(isFinite(med)?med:0)/30*100),Math.min(100,(isFinite(hyg)?hyg:0)/30*100),v("security")*25],score=Math.round(readiness.reduce((a,b)=>a+b,0)/readiness.length);$("days").textContent=f(days);$("score").textContent=score;$("foodDays").textContent=f(food);$("waterDays").textContent=f(wd);$("powerDays").textContent=f(power);$("foodVariety").textContent=foodTypes;$("dayLabel").textContent=days>=90?"90+ days before a modeled critical shortage":"days until first modeled critical shortage";$("dayLabel").className="status "+(days>=30?"good":days>=7?"warn":"bad");$("confidence").textContent="The shortest modeled coverage is the headline estimate.";let b=$("breakdown");b.innerHTML="";list.forEach(([n,d])=>{let z=document.createElement("div"),cl=!isFinite(d)?"good":d<7?"bad":d<30?"warn":"good";z.style.margin="12px 0";z.innerHTML=`<div style="display:flex;justify-content:space-between;gap:8px"><b>${n}</b><span class="${cl}">${isFinite(d)?f(d)+" days":"Not entered / not limiting"}</span></div><div class="bar"><span style="width:${isFinite(d)?Math.min(100,d/90*100):0}%;background:${cl==="bad"?"var(--r)":cl==="warn"?"var(--w)":"var(--g)"}"></span></div>`;b.appendChild(z)});let pri=[ [wd,"Increase safe water or treatment capacity"],[fd,"Add calorie-dense staples"],[pd,"Add shelf-stable protein"],[fuelD,"Increase cooking fuel or reduce fuel use"],[power,"Increase usable battery capacity or reduce electrical load"],[med,"Audit essential medicines and first aid"],[hyg,"Improve toilet, waste and hygiene arrangements"]].filter(x=>isFinite(x[0])).sort((a,b)=>a[0]-b[0]);$("priorities").innerHTML="";pri.slice(0,4).forEach(x=>{let li=document.createElement("li");li.textContent=x[1];$("priorities").appendChild(li)});$("caveat").textContent="Rain is treated as continuous daily supply only if you enter a realistic average. A filter does not make chemically contaminated or salty water safe unless specifically designed for it. A day estimate cannot predict actual survival in a collapse."}
+
+// Expanded nutrition model. Food profiles are illustrative category estimates,
+// not direct brand-specific laboratory values.
+const N_META = [
+ {k:"fiber",n:"Dietary fibre",u:"g",m:30,f:25,core:true},
+ {k:"vitA",n:"Vitamin A",u:"µg RE",m:900,f:700,core:true},
+ {k:"b1",n:"Thiamin (B1)",u:"mg",m:1.2,f:1.1,core:true},
+ {k:"b2",n:"Riboflavin (B2)",u:"mg",m:1.3,f:1.1,core:true},
+ {k:"b3",n:"Niacin (B3)",u:"mg NE",m:16,f:14,core:true},
+ {k:"b6",n:"Vitamin B6",u:"mg",m:1.7,f:1.5,core:true},
+ {k:"b12",n:"Vitamin B12",u:"µg",m:2.4,f:2.4,core:true},
+ {k:"folate",n:"Folate",u:"µg DFE",m:400,f:400,core:true},
+ {k:"vitC",n:"Vitamin C",u:"mg",m:45,f:45,core:true},
+ {k:"vitD",n:"Vitamin D",u:"µg",m:5,f:5,core:true},
+ {k:"vitE",n:"Vitamin E",u:"mg",m:10,f:7.5,core:true},
+ {k:"vitK",n:"Vitamin K",u:"µg",m:70,f:60,core:true},
+ {k:"calcium",n:"Calcium",u:"mg",m:1000,f:1000,core:true},
+ {k:"iron",n:"Iron",u:"mg",m:8,f:18,core:true},
+ {k:"magnesium",n:"Magnesium",u:"mg",m:420,f:320,core:true},
+ {k:"potassium",n:"Potassium",u:"mg",m:3800,f:2800,core:true},
+ {k:"zinc",n:"Zinc",u:"mg",m:14,f:8,core:true},
+ {k:"iodine",n:"Iodine",u:"µg",m:150,f:150,core:true},
+ {k:"selenium",n:"Selenium",u:"µg",m:70,f:60,core:true},
+ {k:"phosphorus",n:"Phosphorus",u:"mg",m:1000,f:1000,core:false},
+ {k:"copper",n:"Copper",u:"mg",m:1.7,f:1.2,core:false},
+ {k:"manganese",n:"Manganese",u:"mg",m:5.5,f:5,core:false},
+ {k:"choline",n:"Choline",u:"mg",m:550,f:425,core:false},
+ {k:"biotin",n:"Biotin",u:"µg",m:30,f:30,core:false},
+ {k:"pantothenic",n:"Pantothenic acid (B5)",u:"mg",m:5,f:5,core:false},
+ {k:"omega3",n:"Omega-3 fats",u:"mg",m:160,f:90,core:false},
+ {k:"chromium",n:"Chromium",u:"µg",m:35,f:25,core:false,extra:true},
+ {k:"fluoride",n:"Fluoride",u:"mg",m:4,f:3,core:false,extra:true},
+ {k:"molybdenum",n:"Molybdenum",u:"µg",m:45,f:45,core:false,extra:true},
+ {k:"sodium",n:"Sodium (upper-limit check)",u:"mg",m:2000,f:2000,upper:true,core:false}
+];
+const GROUP_NUT = {
+ "Grains & starches":{fiber:7,vitA:2,b1:.35,b2:.12,b3:4.5,b6:.15,b12:0,folate:35,vitC:0,vitD:0,vitE:.6,vitK:2,calcium:28,iron:2.5,magnesium:95,potassium:260,zinc:2,iodine:2,selenium:22,phosphorus:260,copper:.35,manganese:1.6,choline:25,biotin:4,pantothenic:.6,omega3:35,sodium:20},
+ "Legumes & plant protein":{fiber:15,vitA:5,b1:.5,b2:.2,b3:2,b6:.3,b12:0,folate:240,vitC:3,vitD:0,vitE:.5,vitK:5,calcium:60,iron:5,magnesium:120,potassium:850,zinc:2.8,iodine:2,selenium:5,phosphorus:300,copper:.55,manganese:1.2,choline:50,biotin:10,pantothenic:1,omega3:80,sodium:25},
+ "Nuts, seeds & spreads":{fiber:9,vitA:2,b1:.65,b2:.15,b3:4,b6:.4,b12:0,folate:90,vitC:1,vitD:0,vitE:8,vitK:4,calcium:120,iron:4,magnesium:240,potassium:650,zinc:3.5,iodine:2,selenium:15,phosphorus:450,copper:1,manganese:2,choline:55,biotin:15,pantothenic:.8,omega3:800,sodium:20},
+ "Canned seafood & meat":{fiber:0,vitA:15,b1:.1,b2:.2,b3:8,b6:.3,b12:3,folate:8,vitC:0,vitD:2,vitE:.5,vitK:2,calcium:25,iron:2.5,magnesium:30,potassium:300,zinc:3.5,iodine:15,selenium:30,phosphorus:210,copper:.1,manganese:.03,choline:75,biotin:5,pantothenic:.5,omega3:250,sodium:450},
+ "Dairy & eggs":{fiber:0,vitA:65,b1:.04,b2:.3,b3:.1,b6:.05,b12:.8,folate:8,vitC:1,vitD:1,vitE:.2,vitK:.5,calcium:120,iron:.1,magnesium:12,potassium:150,zinc:.5,iodine:35,selenium:4,phosphorus:100,copper:.02,manganese:.01,choline:18,biotin:3,pantothenic:.4,omega3:35,sodium:50},
+ "Oils, fats & spreads":{fiber:0,vitA:0,b1:0,b2:0,b3:0,b6:0,b12:0,folate:0,vitC:0,vitD:0,vitE:12,vitK:35,calcium:0,iron:0,magnesium:0,potassium:0,zinc:0,iodine:0,selenium:0,phosphorus:0,copper:0,manganese:0,choline:0,biotin:0,pantothenic:0,omega3:100,sodium:5},
+ "Sweeteners & baking":{fiber:0,vitA:0,b1:0,b2:0,b3:0,b6:0,b12:0,folate:0,vitC:0,vitD:0,vitE:0,vitK:0,calcium:5,iron:.1,magnesium:2,potassium:15,zinc:0,iodine:0,selenium:0,phosphorus:2,copper:0,manganese:0,choline:0,biotin:0,pantothenic:0,omega3:0,sodium:10},
+ "Vegetables & legumes":{fiber:3.5,vitA:180,b1:.08,b2:.08,b3:.7,b6:.15,b12:0,folate:50,vitC:22,vitD:0,vitE:1,vitK:45,calcium:55,iron:1,magnesium:25,potassium:320,zinc:.35,iodine:4,selenium:1,phosphorus:40,copper:.1,manganese:.25,choline:15,biotin:2,pantothenic:.2,omega3:35,sodium:80},
+ "Fruit & dried fruit":{fiber:4,vitA:25,b1:.05,b2:.05,b3:.5,b6:.1,b12:0,folate:15,vitC:25,vitD:0,vitE:.5,vitK:3,calcium:25,iron:.5,magnesium:20,potassium:250,zinc:.15,iodine:1,selenium:.5,phosphorus:20,copper:.1,manganese:.15,choline:7,biotin:1,pantothenic:.2,omega3:5,sodium:10},
+ "Ready meals & snacks":{fiber:2,vitA:25,b1:.12,b2:.1,b3:1.5,b6:.1,b12:.2,folate:20,vitC:3,vitD:.2,vitE:1,vitK:4,calcium:45,iron:1.2,magnesium:25,potassium:180,zinc:.5,iodine:5,selenium:6,phosphorus:90,copper:.08,manganese:.15,choline:20,biotin:2,pantothenic:.2,omega3:30,sodium:550},
+ "Seasonings & extras":{fiber:2,vitA:5,b1:.05,b2:.05,b3:.2,b6:.05,b12:0,folate:5,vitC:1,vitD:0,vitE:.2,vitK:2,calcium:30,iron:1,magnesium:20,potassium:80,zinc:.2,iodine:2,selenium:1,phosphorus:25,copper:.05,manganese:.1,choline:2,biotin:1,pantothenic:.05,omega3:0,sodium:1200}
+};
+
+const MACRO_BY_CAT = {
+ "Grains & starches":{fat:2.5,carbs:72},
+ "Legumes & plant protein":{fat:2.5,carbs:58},
+ "Nuts, seeds & spreads":{fat:50,carbs:20},
+ "Canned seafood & meat":{fat:10,carbs:1},
+ "Dairy & eggs":{fat:8,carbs:12},
+ "Oils, fats & spreads":{fat:100,carbs:0},
+ "Sweeteners & baking":{fat:0.5,carbs:95},
+ "Vegetables & legumes":{fat:.5,carbs:8},
+ "Fruit & dried fruit":{fat:.5,carbs:65},
+ "Ready meals & snacks":{fat:10,carbs:28},
+ "Seasonings & extras":{fat:2,carbs:25}
+};
+
+const TRACE_BY_CAT = {
+ "Grains & starches":{chromium:10,fluoride:.05,molybdenum:50},
+ "Legumes & plant protein":{chromium:10,fluoride:.03,molybdenum:100},
+ "Nuts, seeds & spreads":{chromium:10,fluoride:.05,molybdenum:40},
+ "Canned seafood & meat":{chromium:2,fluoride:.1,molybdenum:10},
+ "Dairy & eggs":{chromium:1,fluoride:.1,molybdenum:5},
+ "Oils, fats & spreads":{chromium:0,fluoride:0,molybdenum:0},
+ "Sweeteners & baking":{chromium:1,fluoride:.02,molybdenum:5},
+ "Vegetables & legumes":{chromium:5,fluoride:.05,molybdenum:10},
+ "Fruit & dried fruit":{chromium:2,fluoride:.03,molybdenum:3},
+ "Ready meals & snacks":{chromium:2,fluoride:.05,molybdenum:5},
+ "Seasonings & extras":{chromium:1,fluoride:.05,molybdenum:5}
+};
+const FOOD_OVERRIDES = {
+ rice:{fiber:.6,b1:.05,folate:8,iron:.8,magnesium:12,potassium:35},
+ brownrice:{fiber:3.5,b1:.4,b3:5,folate:20,magnesium:110,potassium:250},
+ oats:{fiber:10.6,b1:.46,b2:.15,b3:1,b6:.1,folate:32,iron:4.3,magnesium:177,potassium:429,zinc:4,selenium:28},
+ lentils:{fiber:11.5,folate:180,iron:3.3,magnesium:36,potassium:677,zinc:1.3},
+ chickpeas:{fiber:12.5,folate:170,iron:2.9,magnesium:48,potassium:291,zinc:1.5},
+ tuna:{b12:9,vitD:5,selenium:80,iodine:20,omega3:250,sodium:350},
+ salmon:{b12:5,vitD:12,selenium:35,iodine:30,omega3:1500},
+ sardines:{vitD:5,b12:8,calcium:380,selenium:50,omega3:1400,sodium:450},
+ mackerel:{vitD:16,b12:12,selenium:45,iodine:45,omega3:2500},
+ oysters:{b12:16,zinc:40,iron:5,copper:4,selenium:60,iodine:100},
+ mussels:{b12:20,iron:6,selenium:45,iodine:100},
+ beef:{b12:2.5,zinc:5,iron:2.5,selenium:25},
+ cornedbeef:{b12:2.5,zinc:5,iron:2.5,sodium:1100},
+ chicken:{b3:10,b6:.4,selenium:25,choline:70},
+ cannedLiver:{vitA:6000,b12:40,iron:7,copper:8,folate:250},
+ milk:{calcium:1000,vitB12:.9,iodine:40,vitA:50},
+ skimMilk:{calcium:1250,b12:1,iodine:45},
+ eggpowder:{vitA:350,b12:2.5,vitD:5,choline:680,selenium:60},
+ eggs:{vitA:160,b12:1.1,vitD:2,choline:290,selenium:30},
+ peanutbutter:{vitE:9,niacin:13,magnesium:170,potassium:650},
+ almonds:{vitE:25,calcium:269,magnesium:270},
+ chia:{fiber:34,calcium:630,magnesium:335,omega3:17500},
+ flax:{fiber:27,magnesium:390,omega3:22000},
+ pumpkinSeeds:{magnesium:550,zinc:7.5,iron:8,omega3:100},
+ cannedTomato:{vitC:12,vitA:35,potassium:250},
+ spinachPowder:{vitA:3000,vitC:25,vitK:1000,folate:1900,iron:20,calcium:300},
+ cannedSpinach:{vitA:300,vitC:9,vitK:350,folate:140,iron:2.5},
+ driedBroccoli:{vitC:90,vitA:700,vitK:500,folate:300,calcium:150},
+ nori:{iodine:1000,b12:20,iron:10,vitA:1000},
+ wakame:{iodine:1500,calcium:150,magnesium:100},
+ iodisedSalt:{sodium:39000,iodine:4500}
+};
+const DEFAULT_GRAMS = {
+ water:1000, rice:1000,brownrice:1000,oats:1000,pasta:1000,flour:1000,bread:1000,couscous:1000,quinoa:1000,barley:1000,polenta:1000,noodles:85,potato:1000,crackers:1000,ricecakes:100,
+ tuna:120,salmon:150,sardines:100,mackerel:125,anchovy:50,beef:150,cornedbeef:150,chicken:150,ham:150,pork:150,spam:150,jerky:1000,
+ milk:1000,skimMilk:1000,whey:1000,evapMilk:375,condensedMilk:397,cheese:1000,eggpowder:1000,eggs:600,
+ oil:910,oliveoil:910,coconut:910,ghee:1000,lard:1000,
+ sugar:1000,brownSugar:1000,honey:1000,jam:300,goldenSyrup:1000,bakingPowder:100,yeast:7,
+ cannedTomato:400,corn:300,peas:300,carrots:300,mixedVeg:400,mushrooms:200,beetroot:400,pumpkin:400,potatoCan:400,sauerkraut:300,pickles:300,
+ cannedFruit:400,peaches:400,pineapple:400,applesauce:300,raisins:1000,dates:1000,apricots:1000,prunes:1000,bananaChips:1000,fruitBars:35,
+ noodlesSoup:20,mealPouch:250,cannedSoup:400,bakedBeans:400,curry:400,chilli:400,macCheese:100,energyBars:50,darkChocolate:1000,biscuits:1000,crackersSnacks:1000,
+ electrolyte:10,salt:1000,stock:10,soySauce:1000,vinegar:910,spices:50,coffee:100,tea:100,
+ uhtMilk:1000,soyMilk:1000,coconutMilk:400,coconutCream:400,tofu:300,tvp:1000,blackBeans:400,kidneyBeans:400,cannellini:400,lentilCan:400,edamame:1000,
+ sunflowerButter:1000,tahini:1000,pumpkinSeeds:1000,pistachios:1000,pecans:1000,macadamia:1000,brazilNuts:1000,
+ nori:25,wakame:30,spinachPowder:100,freezeVeg:40,driedBroccoli:1000,driedCarrot:1000,driedOnion:1000,driedGarlic:1000,driedCabbage:1000,driedMushroom:1000,
+ olives:300,cannedAsparagus:300,cannedLiver:150,oysters:100,mussels:150,prawns:150,smokedOysters:100,soupStock:1000,freezeMeal:125,cerealFortified:1000,granola:1000,cornflakes:1000,crackedWheat:1000,tapioca:1000,cornstarch:1000,potatoStarch:1000,coconutFlour:1000,
+ driedFigs:1000,driedCranberries:1000,driedMango:1000,driedApple:1000,guavaPaste:1000,tomatoPaste:170,coconutSugar:1000,mapleSyrup:910,molasses:1000,gelatine:25,iodisedSalt:1000,miso:500,fishSauce:1000,curryPowder:50,chilliFlakes:50
+};
+const PROFILE_KEY_OVERRIDES = {
+ eggs:"Dairy & eggs", uhtMilk:"Dairy & eggs", soyMilk:"Dairy & eggs", coconutMilk:"Dairy & eggs",
+ tvp:"Legumes & plant protein", blackBeans:"Legumes & plant protein", kidneyBeans:"Legumes & plant protein", cannellini:"Legumes & plant protein", lentilCan:"Legumes & plant protein", edamame:"Legumes & plant protein", tofu:"Legumes & plant protein",
+ nori:"Vegetables & legumes",wakame:"Vegetables & legumes",spinachPowder:"Vegetables & legumes",freezeVeg:"Vegetables & legumes",driedBroccoli:"Vegetables & legumes",driedCarrot:"Vegetables & legumes",driedOnion:"Vegetables & legumes",driedGarlic:"Vegetables & legumes",driedCabbage:"Vegetables & legumes",driedMushroom:"Vegetables & legumes",olives:"Vegetables & legumes",cannedAsparagus:"Vegetables & legumes",cannedSpinach:"Vegetables & legumes",tomatoPaste:"Vegetables & legumes",
+ cannedLiver:"Canned seafood & meat",oysters:"Canned seafood & meat",mussels:"Canned seafood & meat",prawns:"Canned seafood & meat",smokedOysters:"Canned seafood & meat",
+ soupStock:"Ready meals & snacks",freezeMeal:"Ready meals & snacks",miso:"Seasonings & extras",fishSauce:"Seasonings & extras",curryPowder:"Seasonings & extras",chilliFlakes:"Seasonings & extras",iodisedSalt:"Seasonings & extras"
+};
+const FISH_KEYS = new Set(["tuna","salmon","sardines","mackerel","anchovy","oysters","mussels","prawns","smokedOysters"]);
+const NUT_KEYS = new Set(["peanutbutter","peanuts","almonds","cashews","walnuts","sunflower","chia","flax","sunflowerButter","tahini","pumpkinSeeds","pistachios","pecans","macadamia","brazilNuts"]);
+function foodProfile(key) {
+ const category = PROFILE_KEY_OVERRIDES[key] || C[key]?.cat || "Ready meals & snacks";
+ let p = {...(GROUP_NUT[category] || GROUP_NUT["Ready meals & snacks"])};
+ if (FISH_KEYS.has(key)) p={...p,...GROUP_NUT["Canned seafood & meat"],vitD:8,b12:8,omega3:1300,iodine:45,selenium:45};
+ if (NUT_KEYS.has(key)) p={...p,...GROUP_NUT["Nuts, seeds & spreads"]};
+ if (key==="iodisedSalt") p={...p,sodium:39000,iodine:4500};
+ if (key==="salt") p={...p,sodium:39000};
+ if (key==="coffee" || key==="tea") p={...p,vitA:0,vitC:0,b12:0,calcium:5,iron:.1,potassium:50,sodium:5};
+ if (key==="oil" || key==="oliveoil" || key==="coconut" || key==="ghee" || key==="lard" || key==="coconutCream") p={...GROUP_NUT["Oils, fats & spreads"]};
+ if (key==="sugar" || key==="brownSugar" || key==="goldenSyrup" || key==="coconutSugar" || key==="mapleSyrup") p={...GROUP_NUT["Sweeteners & baking"],sodium:5};
+ return {...p,...(TRACE_BY_CAT[category]||{}),...(FOOD_OVERRIDES[key]||{})};
+}
+function targetFor(n) {
+ const mode=$("nutProfile")?.value || "mixed";
+ return mode==="male"?n.m:mode==="female"?n.f:(n.m+n.f)/2;
+}
+function profileAmountPerUnit(row,key) {
+ if (row.type==="custom") return Number(row.nutrients?.[key])||0;
+ const p=foodProfile(row.type);
+ const grams=Number(row.grams)||DEFAULT_GRAMS[row.type]||100;
+ return (Number(p[key])||0)*grams/100;
+}
+
+function macroAmountPerUnit(row,key) {
+ if (row.type==="custom") return Number(row.macros?.[key])||0;
+ const category=PROFILE_KEY_OVERRIDES[row.type] || C[row.type]?.cat || "Ready meals & snacks";
+ const profile=MACRO_BY_CAT[category] || MACRO_BY_CAT["Ready meals & snacks"];
+ const grams=Number(row.grams)||DEFAULT_GRAMS[row.type]||100;
+ return (Number(profile[key])||0)*grams/100;
+}
+function renderNutrientInputs(row) {
+ return `<details class="wide"><summary>Custom nutrition label values per item (optional)</summary><p class="note">Enter values from the package label for one item / pack. Leave unknown nutrients blank or zero. Units are shown beside each field.</p><div class="fields"><div><label>Total fat (g / item)</label><input class="macrocustom" data-m="fat" type="number" min="0" step="any" value="${row.macros?.fat||0}"></div><div><label>Carbohydrate (g / item)</label><input class="macrocustom" data-m="carbs" type="number" min="0" step="any" value="${row.macros?.carbs||0}"></div>${N_META.map(n=>`<div><label>${n.n} (${n.u})</label><input class="nutcustom" data-n="${n.k}" type="number" min="0" step="any" value="${row.nutrients?.[n.k]||0}"></div>`).join("")}</div></details>`;
+}
+draw = function() {
+ const host=$("items"); host.innerHTML="";
+ if(!rows.length){host.innerHTML='<div class="empty">No inventory entered. Add your first item.</div>';return;}
+ rows.forEach(r=>{
+  const c=C[r.type], food=c.g==="food", custom=!!c.custom;
+  if(r.grams===undefined)r.grams=DEFAULT_GRAMS[r.type]||100;
+  if(!r.nutrients)r.nutrients={};
+  const d=document.createElement("div"); d.className="item";
+  const groups=[...new Set(Object.values(C).map(x=>x.cat).filter(Boolean))];
+  d.innerHTML=`<div><label>Supply type</label><select class="type">${Object.entries(C).filter(([k,x])=>!x.cat).map(([k,x])=>`<option value="${k}" ${k===r.type?"selected":""}>${x.n}</option>`).join("")}${groups.map(cat=>`<optgroup label="${cat}">${Object.entries(C).filter(([k,x])=>x.cat===cat).map(([k,x])=>`<option value="${k}" ${k===r.type?"selected":""}>${x.n}</option>`).join("")}</optgroup>`).join("")}</select></div>
+  <div><label>Quantity (${c.u})</label><input class="qty" type="number" min="0" step="any" value="${r.qty}"></div>
+  <div><label>Approx. grams / unit</label><input class="grams" type="number" min="0" step="any" value="${r.grams||100}" ${custom?"disabled":""}></div>
+  <div><label>Custom kcal / item</label><input class="k" type="number" min="0" step="any" value="${r.k||0}" ${custom?"":"disabled"}></div>
+  <div><label>Custom protein g / item</label><input class="p" type="number" min="0" step="any" value="${r.p||0}" ${custom?"":"disabled"}></div>
+  <button class="danger remove">Remove</button>
+  ${custom?renderNutrientInputs(r):`<p class="note wide">Nutrition profile is an estimate. Edit grams per unit to match drained / edible package weight.</p>`}`;
+  d.querySelector(".type").onchange=e=>{r.type=e.target.value;r.k=0;r.p=0;r.grams=DEFAULT_GRAMS[r.type]||100;r.nutrients={};r.macros={};draw();calc();};
+  d.querySelector(".qty").oninput=e=>{r.qty=Math.max(0,+e.target.value||0);calc();};
+  d.querySelector(".grams").oninput=e=>{if(!custom)r.grams=Math.max(0,+e.target.value||0);calc();};
+  d.querySelector(".k").oninput=e=>{if(custom)r.k=Math.max(0,+e.target.value||0);calc();};
+  d.querySelector(".p").oninput=e=>{if(custom)r.p=Math.max(0,+e.target.value||0);calc();};
+  d.querySelectorAll(".nutcustom").forEach(inp=>inp.oninput=e=>{r.nutrients[e.target.dataset.n]=Math.max(0,+e.target.value||0);calc();});
+  if(!r.macros)r.macros={};
+  d.querySelectorAll(".macrocustom").forEach(inp=>inp.oninput=e=>{r.macros[e.target.dataset.m]=Math.max(0,+e.target.value||0);calc();});
+  d.querySelector(".remove").onclick=()=>{rows=rows.filter(x=>x.id!==r.id);draw();calc();};
+  host.appendChild(d);
+ });
+};
+add = function(type="rice",qty=0) {rows.push({id:Math.random(),type,qty,k:0,p:0,grams:DEFAULT_GRAMS[type]||100,nutrients:{},macros:{}});draw();};
+const oldCalc = calc;
+calc = function() {
+ oldCalc();
+ const people=Math.max(1,v("people"));
+ let totalKcal=0, totals=Object.fromEntries(N_META.map(n=>[n.k,0])), macroTotals={fat:0,carbs:0};
+ rows.forEach(r=>{
+  const c=C[r.type]; if(!c || c.g!=="food" || !(r.qty>0))return;
+  totalKcal += r.qty*(c.custom?(Number(r.k)||0):(Number(c.k)||0));
+  N_META.forEach(n=>{totals[n.k]+=profileAmountPerUnit(r,n.k)*r.qty;});
+  macroTotals.fat += macroAmountPerUnit(r,"fat")*r.qty;
+  macroTotals.carbs += macroAmountPerUnit(r,"carbs")*r.qty;
+ });
+ const dailyCalories=Math.max(1,v("calNeed")*people);
+ const dailyProtein=Math.max(1,v("proteinNeed")*people);
+ let totalProtein=0;
+ rows.forEach(r=>{const c=C[r.type];if(c?.g==="food"&&r.qty>0)totalProtein+=r.qty*(c.custom?(Number(r.p)||0):(Number(c.p)||0));});
+ const calorieDays=totalKcal>0?totalKcal/dailyCalories:0;
+ const proteinDays=totalProtein>0?totalProtein/dailyProtein:0;
+ const foodDays=calorieDays>0&&proteinDays>0?Math.min(calorieDays,proteinDays):0;
+ const rowsWithFood=rows.filter(r=>C[r.type]?.g==="food"&&r.qty>0);
+ const foodGroups=new Set(rowsWithFood.map(r=>PROFILE_KEY_OVERRIDES[r.type]||C[r.type]?.cat).filter(x=>x&&x!=="Custom"));
+ const categoryCount=foodGroups.size;
+ const values=[];
+ N_META.filter(n=>n.core||n.extra).forEach(n=>{
+  const target=targetFor(n)*people;
+  const avgDay=foodDays>0?totals[n.k]/foodDays:0;
+  const pct=target>0?avgDay/target*100:0;
+  values.push({n,avgDay,pct});
+ });
+ const scoredValues=values.filter(x=>x.n.core);
+ const nutritionScore=scoredValues.length?Math.round(scoredValues.reduce((a,x)=>a+Math.min(100,x.pct),0)/scoredValues.length):0;
+ const varietyScore=Math.min(100,categoryCount/11*100);
+ const proteinCoverage=foodDays>0?(totalProtein/foodDays)/dailyProtein*100:0;
+ const qualityScore=Math.round(nutritionScore*.75+varietyScore*.15+Math.min(100,proteinCoverage)*.10);
+ $("foodQualityScore").textContent=foodDays>0?qualityScore:"—";
+ // Reweight the broad readiness score to include food nutrient quality.
+ const previousScore=Number($("score").textContent)||0;
+ $("score").textContent=foodDays>0?Math.round(previousScore*.8+qualityScore*.2):previousScore;
+ const stockCount=new Set(rowsWithFood.map(r=>r.type)).size;
+ $("foodVariety").textContent=stockCount;
+ const summary=$("nutritionSummary"),table=$("nutrientTable"),advice=$("nutritionAdvice");
+ if(!foodDays || !rowsWithFood.length){
+  summary.innerHTML='<p class="warn">Add food inventory with quantities to estimate daily nutrient coverage.</p>';
+  table.innerHTML="";advice.innerHTML="";return;
+ }
+ const low=values.filter(x=>x.pct<70).sort((a,b)=>a.pct-b.pct);
+ const strong=values.filter(x=>x.pct>=100).length;
+ const profileName=$("nutProfile").selectedOptions[0].textContent;
+ const proteinPerPerson=foodDays>0?(totalProtein/foodDays)/people:0;
+ const fatPerPerson=foodDays>0?(macroTotals.fat/foodDays)/people:0;
+ const carbsPerPerson=foodDays>0?(macroTotals.carbs/foodDays)/people:0;
+ const fatMin=v("calNeed")*.20/9, fatMax=v("calNeed")*.35/9;
+ const carbsMin=v("calNeed")*.45/4, carbsMax=v("calNeed")*.65/4;
+ summary.innerHTML=`<div class="nut-kpi"><span class="nut-pill">Food energy support: <b>${f(foodDays)} days</b></span><span class="nut-pill">Food groups stocked: <b>${categoryCount}/11</b></span><span class="nut-pill">Core nutrients at 100%+: <b>${strong}/${values.length}</b></span><span class="nut-pill">Estimated nutrition quality: <b>${qualityScore}/100</b></span></div><div class="nut-kpi"><span class="nut-pill">Protein: <b>${f(proteinPerPerson)} g/person/day</b></span><span class="nut-pill">Fat: <b>${f(fatPerPerson)} g</b> (planning range ${f(fatMin)}–${f(fatMax)} g)</span><span class="nut-pill">Carbohydrate: <b>${f(carbsPerPerson)} g</b> (planning range ${f(carbsMin)}–${f(carbsMax)} g)</span></div>`;
+ table.innerHTML=`<div style="overflow-x:auto"><table class="nut-table"><thead><tr><th>Nutrient</th><th>Estimated / person / day</th><th>Planning target</th><th>Coverage</th><th>Flag</th></tr></thead><tbody>${values.map(x=>{
+  const individual=x.avgDay/people, target=targetFor(x.n), pct=x.pct;
+  const cls=pct<50?"bad":pct<100?"warn":"good";
+  const width=Math.max(0,Math.min(100,pct));
+  return `<tr><td>${x.n.n}</td><td>${f(individual)} ${x.n.u}</td><td>${f(target)} ${x.n.u}</td><td><div class="nut-bar"><span style="width:${width}%;background:${cls==="bad"?"var(--r)":cls==="warn"?"var(--w)":"var(--g)"}"></span></div><span class="${cls}">${f(pct)}%</span></td><td class="nut-status ${cls}">${pct<50?"Low":pct<100?"Gap":"Meets model target"}</td></tr>`;
+ }).join("")}</tbody></table></div><p class="note">Reference profile: ${profileName}. These are adult planning reference values, not individual prescriptions. The model assumes the whole stock is consumed evenly over the calorie-supported food days.</p>`;
+ const sodium=foodDays>0?(totals.sodium/foodDays)/people:0;
+ const sodiumAlert=sodium>2000?`<p class="bad"><b>Sodium warning:</b> estimated ${f(sodium)} mg/person/day, above the 2,000 mg/day upper-level check used here. High-sodium canned foods, sauces and salt can drive this up.</p>`:`<p class="note">Estimated sodium: ${f(sodium)} mg/person/day. This is a rough estimate; check labels for canned food and sauces.</p>`;
+ const fixes={
+  fiber:"Add oats, whole grains, lentils, beans, dried fruit and vegetables.",
+  vitA:"Add pumpkin, carrots, spinach, dried leafy greens, eggs or liver in appropriate amounts.",
+  b1:"Add oats, whole grains, legumes, pork or fortified cereals.",
+  b2:"Add milk powder, dairy, eggs, meat or fortified foods.",
+  b3:"Add tuna, chicken, peanuts, meat or fortified grains.",
+  b6:"Add fish, poultry, chickpeas, potatoes and bananas.",
+  b12:"Add seafood, meat, eggs, dairy or an appropriately fortified alternative.",
+  folate:"Add lentils, beans, spinach, leafy vegetables and fortified cereal.",
+  vitC:"Add fruit, tomatoes, capsicum, broccoli or other vitamin-C-rich produce; heat and storage can reduce vitamin C.",
+  vitD:"Add oily fish, eggs and appropriately fortified products; food alone may not meet every person's needs.",
+  vitE:"Add nuts, seeds and suitable vegetable oils.",
+  vitK:"Add leafy green vegetables such as spinach and broccoli.",
+  calcium:"Add milk powder, UHT milk, fortified soy milk, hard cheese or canned fish with edible bones.",
+  iron:"Add meat, fish, legumes, fortified cereals and seeds; iron absorption differs by food source.",
+  magnesium:"Add oats, whole grains, nuts, seeds, legumes and dark leafy vegetables.",
+  potassium:"Add beans, dried fruit, tomatoes, potatoes and vegetables.",
+  zinc:"Add oysters, meat, dairy, legumes, nuts and seeds.",
+  iodine:"Use appropriately iodised salt in moderation, plus seafood and dairy; avoid relying on high-iodine seaweed without checking its label.",
+  selenium:"Add seafood, eggs, meat and grains; selenium varies widely by soil and source.",
+  phosphorus:"Add dairy, meat, fish, legumes, nuts and whole grains.",
+  copper:"Add nuts, seeds, legumes, seafood and whole grains.",
+  manganese:"Add whole grains, nuts, legumes and tea.",
+  choline:"Add eggs, meat, fish, dairy and soy foods.",
+  biotin:"Add eggs, nuts, seeds, legumes and whole grains.",
+  pantothenic:"Add meat, eggs, whole grains, mushrooms and legumes.",
+  omega3:"Add oily fish, chia, flax and walnuts; plant and marine omega-3 forms are not interchangeable."
+ };
+ const recommendation=low.slice(0,5).map(x=>`<li><b>${x.n.n}: ${f(x.pct)}% coverage</b> — ${fixes[x.n.k]||"Review food variety and package nutrition labels."}</li>`).join("");
+ advice.innerHTML=`<h3 style="margin:16px 0 6px">Biggest estimated nutrition gaps</h3>${low.length?`<ol>${recommendation}</ol>`:'<p class="good">All tracked core nutrients reach the modelled adult planning target. Check food labels and household-specific needs before relying on this result.</p>'}${sodiumAlert}`;
+};
+
+$("add").onclick=()=>{add();calc()};$("clear").onclick=()=>{rows=[];draw();calc()};$("sample").onclick=()=>{rows=[];[["water",200],["rice",100],["tuna",30],["beef",30],["chicken",30],["oil",5],["butane",30],["battery",8]].forEach(x=>add(...x));$("rawWater").value=200;$("filterCap").value=1000;$("filter").checked=true;$("solar").value=1.2;$("medical").value=30;$("hygiene").value=30;$("toilet").value=30;calc()};["people","waterNeed","calNeed","proteinNeed","nutProfile","powerNeed","cookNeed","rawWater","rain","filterCap","filter","solar","genFuel","genRate","genHours","medical","hygiene","toilet","climate","security"].forEach(id=>$(id).addEventListener("input",calc));draw();calc();
+</script></body></html>
